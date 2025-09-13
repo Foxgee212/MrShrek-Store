@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 
 export default function ProductCard({product}){
     return (
-        <div className="border rounded-1g p-4 shadow hover:shadow-1g transition">
-            <img src={product.image} alt={product.name} className="w-full h-40 object-scale-down rounded" />
-            <h3 className="text-1g font-semibold mt-2">{product.name}</h3>
+        <div className="border rounded-lg p-4 shadow hover:shadow-lg transition">
+            <img src={product.image} alt={product.name} className="w-full h-40 object-scale-down rounded-lg" />
+            <h3 className="text-lg font-semibold mt-2">{product.name}</h3>
             <p className="text-gray-700">₦{product.price.toLocaleString()}</p>
             <Link
              to={`product/${product.id}`}
