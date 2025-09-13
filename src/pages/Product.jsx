@@ -12,7 +12,7 @@ export default function Product(){
 
   return (
     <div className="p-6 flex flex-col md:flex-row gap-6">
-      <img src={product.image} alt={product.name} className="w-40 h-60 md:w-1/2 rounded-lg object-scale-down " />
+      <img src={`${import.meta.env.BASE_URL}${product.image}`} alt={product.name} className="w-40 h-60 md:w-1/2 rounded-lg object-scale-down " />
       <div>
         <h2 className="text-3xl font-bold">{product.name}</h2>
         <p className="text-gray-600 mt-2">{product.description}</p>
