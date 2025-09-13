@@ -14,7 +14,7 @@ import Navbar from "./components/Navbar";
 function App() {
   return (
     <CartProvider>
-      <Router>
+      <Router basename="/MrShrek-Store">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home/>}/>
