@@ -11,7 +11,7 @@ function Cart() {
   const { addOrder } = useOrders();
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-  const publicKey = "pk_test_4621ec23b9501a3ae30e19e456e8de84727a27eb"; // replace with your Paystack public key
+  const publicKey = "pk_live_8ae3997fa52803c7789fd20cf9b114f07bc9ccf4"; // replace with your Paystack public key
   const amount = total * 100; // Paystack works in kobo
   const email = user ? user.email : "<user_email>";
 
