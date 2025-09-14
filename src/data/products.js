@@ -3,7 +3,7 @@ const products = [
     id: 1,
     name: "iphone-6s-plus",
     category: "Phones",
-    price: 45000,
+    price: 100,
     image: "Iphones/iphone-6s-plus.jpg",
     description: "High quality smartphone with great features."
   },
