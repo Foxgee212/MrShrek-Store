@@ -8,6 +8,10 @@ const cartReducer = (state, action) => {
       return [...state, action.product];
     case "REMOVE_FROM_CART":
       return state.filter((item) => item.id !== action.id);
+
+    case "CLEAR_CART":
+      localStorage.removeItem("cart"); // also clear from localStorag
+      return [];
     default:
       return state;
   }
