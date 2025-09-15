@@ -26,7 +26,7 @@ function AdminDashboard() {
   const handleHeroFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
+      const imageUrl = URL.createObjectURL(file); // local preview
       setHeroForm((prev) => ({ ...prev, image: imageUrl }));
       setHeroPreview(imageUrl);
     }
@@ -34,7 +34,6 @@ function AdminDashboard() {
 
   const handleHeroSubmit = (e) => {
     e.preventDefault();
-
     if (!heroForm.title || !heroForm.image) {
       alert("Hero title and image are required.");
       return;
@@ -75,7 +74,7 @@ function AdminDashboard() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
+      const imageUrl = URL.createObjectURL(file); // local preview
       setForm((prev) => ({ ...prev, image: imageUrl }));
       setPreview(imageUrl);
     }
@@ -83,7 +82,6 @@ function AdminDashboard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!form.name || !form.price || !form.image) {
       alert("Please fill in product name, price, and image.");
       return;
@@ -156,8 +154,8 @@ function AdminDashboard() {
           {heroPreview && (
             <img
               src={heroPreview}
-              alt="Preview"
-              className="w-40 h-24 object-scale-down rounded border"
+              alt="Hero Preview"
+              className="w-full max-h-64 object-scale-down rounded border"
             />
           )}
 
@@ -181,7 +179,7 @@ function AdminDashboard() {
                 <img
                   src={h.image}
                   alt={h.title}
-                  className="w-24 h-16 object-scale-down rounded"
+                  className="w-32 h-20 object-scale-down rounded"
                 />
                 <div className="flex-1">
                   <h3 className="font-bold">{h.title}</h3>
@@ -209,7 +207,10 @@ function AdminDashboard() {
       <div className="bg-white shadow rounded p-6">
         <h2 className="text-2xl font-bold mb-6">Manage Products</h2>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
+        >
           <input
             type="text"
             name="name"
@@ -235,8 +236,8 @@ function AdminDashboard() {
           {preview && (
             <img
               src={preview}
-              alt="Preview"
-              className="w-32 h-32 object-cover rounded border md:col-span-2"
+              alt="Product Preview"
+              className="w-32 h-32 object-scale-down rounded border md:col-span-2"
             />
           )}
           <textarea
@@ -267,7 +268,7 @@ function AdminDashboard() {
                 <img
                   src={p.image}
                   alt={p.name}
-                  className="w-full h-40 object-scale-down"
+                  className="w-full h-40 object-scale-down rounded-b-none"
                 />
                 <div className="p-4 flex-1 flex flex-col">
                   <h3 className="text-lg font-semibold">{p.name}</h3>

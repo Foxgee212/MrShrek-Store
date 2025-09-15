@@ -5,16 +5,17 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 function HeroBanner() {
   const { heroes } = useHero();
   const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
 
-  // Auto-slide every 5s
+  // Auto-slide every 5s (unless paused)
   useEffect(() => {
-    if (heroes.length > 1) {
+    if (heroes.length > 1 && !paused) {
       const interval = setInterval(() => {
         setCurrent((prev) => (prev + 1) % heroes.length);
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [heroes]);
+  }, [heroes, paused]);
 
   if (heroes.length === 0) {
     return (
@@ -26,36 +27,48 @@ function HeroBanner() {
     );
   }
 
-  const { image, title, subtitle, ctaText, ctaLink } = heroes[current];
-
   return (
-    <div className="relative w-full h-64 md:h-[500px] overflow-hidden rounded-xl shadow-2xl">
-      {/* Background Image */}
-      <img
-        src={image}
-        alt={title}
-        className="w-full h-full object-scale-down transition-all duration-700"
-      />
+    <div
+      className="relative w-full h-64 md:h-[500px] overflow-hidden rounded-xl shadow-2xl"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Slides */}
+      {heroes.map((hero, idx) => (
+        <div
+          key={hero.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            idx === current ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {/* Background Image */}
+          <img
+            src={hero.image}
+            alt={hero.title}
+            className="w-full h-full object-scale-down"
+          />
 
-      {/* Overlay with content */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20 flex flex-col items-center justify-center text-center px-6">
-        <h2 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg">
-          {title}
-        </h2>
-        {subtitle && (
-          <p className="text-lg md:text-2xl text-gray-200 mt-3 max-w-2xl">
-            {subtitle}
-          </p>
-        )}
-        {ctaText && (
-          <a
-            href={ctaLink || "#"}
-            className="mt-6 bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-lg font-semibold shadow-lg transition-transform transform hover:scale-105"
-          >
-            {ctaText}
-          </a>
-        )}
-      </div>
+          {/* Overlay with content */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20 flex flex-col items-center justify-center text-center px-6">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg animate-fadeIn">
+              {hero.title}
+            </h2>
+            {hero.subtitle && (
+              <p className="text-lg md:text-2xl text-gray-200 mt-3 max-w-2xl animate-fadeIn delay-200">
+                {hero.subtitle}
+              </p>
+            )}
+            {hero.ctaText && (
+              <a
+                href={hero.ctaLink || "#"}
+                className="mt-6 bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-lg font-semibold shadow-lg transition-transform transform hover:scale-105 animate-fadeIn delay-500"
+              >
+                {hero.ctaText}
+              </a>
+            )}
+          </div>
+        </div>
+      ))}
 
       {/* Navigation Arrows */}
       {heroes.length > 1 && (
