@@ -23,14 +23,17 @@ function AdminDashboard() {
     setHeroForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleHeroFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file); // local preview
-      setHeroForm((prev) => ({ ...prev, image: imageUrl }));
-      setHeroPreview(imageUrl);
-    }
-  };
+const handleHeroFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setHeroForm((prev) => ({ ...prev, image: reader.result })); // ✅ base64 string
+      setHeroPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
   const handleHeroSubmit = (e) => {
     e.preventDefault();
@@ -74,9 +77,13 @@ function AdminDashboard() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file); // local preview
-      setForm((prev) => ({ ...prev, image: imageUrl }));
-      setPreview(imageUrl);
+        const reader = new FileReader();
+        reader.onload  = () => {
+            setForm((prev) => ({ ...prev, image: reader.result }));
+            setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+
     }
   };
 
