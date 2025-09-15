@@ -32,9 +32,9 @@ function SidebarFilters({ categories, onFilter }) {
         <h4 className="font-semibold">Max Price: ₦{priceRange.toLocaleString()}</h4>
         <input
           type="range"
-          min="50"
+          min="40000"
           max="5000000"
-          step="10"
+          step="10000"
           value={priceRange}
           onChange={(e) => setPriceRange(e.target.value)}
           className="w-full"

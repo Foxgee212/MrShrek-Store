@@ -1,93 +1,302 @@
+// pages/AdminDashboard.jsx
 import { useState } from "react";
 import { useAdmin } from "../context/AdminContext";
+import { useHero } from "../context/HeroContext";
 
 function AdminDashboard() {
-  const { products, addProduct, deleteProduct } = useAdmin();
-  const [form, setForm] = useState({ name: "", price: "", image: "" });
+  const { products, addProduct, deleteProduct, updateProduct } = useAdmin();
+  const { heroes, addHero, updateHero, deleteHero } = useHero();
+
+  // ---------- Hero Form ----------
+  const [heroForm, setHeroForm] = useState({
+    title: "",
+    subtitle: "",
+    ctaText: "",
+    ctaLink: "",
+    image: "",
+  });
+  const [heroPreview, setHeroPreview] = useState(null);
+  const [editingHeroId, setEditingHeroId] = useState(null);
+
+  const handleHeroChange = (e) => {
+    const { name, value } = e.target;
+    setHeroForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleHeroFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setHeroForm((prev) => ({ ...prev, image: imageUrl }));
+      setHeroPreview(imageUrl);
+    }
+  };
+
+  const handleHeroSubmit = (e) => {
+    e.preventDefault();
+
+    if (!heroForm.title || !heroForm.image) {
+      alert("Hero title and image are required.");
+      return;
+    }
+
+    if (editingHeroId) {
+      updateHero(editingHeroId, heroForm);
+      setEditingHeroId(null);
+    } else {
+      addHero(heroForm);
+    }
+
+    setHeroForm({ title: "", subtitle: "", ctaText: "", ctaLink: "", image: "" });
+    setHeroPreview(null);
+  };
+
+  const handleHeroEdit = (hero) => {
+    setHeroForm(hero);
+    setHeroPreview(hero.image);
+    setEditingHeroId(hero.id);
+  };
+
+  // ---------- Product Form ----------
+  const [form, setForm] = useState({
+    name: "",
+    price: "",
+    image: "",
+    description: "",
+  });
+  const [preview, setPreview] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setForm((prev) => ({ ...prev, image: imageUrl }));
+      setPreview(imageUrl);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!form.name || !form.price || !form.image) {
-      alert("All fields are required");
+      alert("Please fill in product name, price, and image.");
       return;
     }
-    addProduct(form);
-    setForm({ name: "", price: "", image: "" });
+
+    if (editingId) {
+      updateProduct(editingId, form);
+      setEditingId(null);
+    } else {
+      addProduct(form);
+    }
+
+    setForm({ name: "", price: "", image: "", description: "" });
+    setPreview(null);
+  };
+
+  const handleEdit = (product) => {
+    setForm(product);
+    setPreview(product.image);
+    setEditingId(product.id);
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+    <div className="p-6 space-y-10">
+      {/* ✅ Hero Management */}
+      <div className="bg-white shadow rounded p-6">
+        <h2 className="text-2xl font-bold mb-6">Manage Hero Banner</h2>
 
-      {/* Add Product Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-4 rounded shadow mb-6 space-y-4"
-      >
-        <input
-          type="text"
-          placeholder="Product Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={form.price}
-          onChange={(e) => setForm({ ...form, price: e.target.value })}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="text"
-          placeholder="Image URL"
-          value={form.image}
-          onChange={(e) => setForm({ ...form, image: e.target.value })}
-          className="w-full border p-2 rounded"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Add Product
-        </button>
-      </form>
+        <form onSubmit={handleHeroSubmit} className="grid gap-4 mb-8">
+          <input
+            type="text"
+            name="title"
+            value={heroForm.title}
+            onChange={handleHeroChange}
+            placeholder="Hero Title"
+            className="p-2 border rounded"
+          />
+          <input
+            type="text"
+            name="subtitle"
+            value={heroForm.subtitle}
+            onChange={handleHeroChange}
+            placeholder="Hero Subtitle"
+            className="p-2 border rounded"
+          />
+          <input
+            type="text"
+            name="ctaText"
+            value={heroForm.ctaText}
+            onChange={handleHeroChange}
+            placeholder="CTA Button Text"
+            className="p-2 border rounded"
+          />
+          <input
+            type="text"
+            name="ctaLink"
+            value={heroForm.ctaLink}
+            onChange={handleHeroChange}
+            placeholder="CTA Button Link"
+            className="p-2 border rounded"
+          />
 
-      {/* Product List */}
-      <h2 className="text-xl font-bold mb-4">All Products</h2>
-      {products.length === 0 ? (
-        <p>No products yet.</p>
-      ) : (
-        <table className="w-full bg-white rounded shadow">
-          <thead>
-            <tr className="bg-gray-200 text-left">
-              <th className="p-2">Image</th>
-              <th className="p-2">Name</th>
-              <th className="p-2">Price</th>
-              <th className="p-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <tr key={p.id} className="border-b">
-                <td className="p-2">
-                  <img src={p.image} alt={p.name} className="w-16 h-16" />
-                </td>
-                <td className="p-2">{p.name}</td>
-                <td className="p-2">₦{Number(p.price).toLocaleString()}</td>
-                <td className="p-2">
-                  <button
-                    onClick={() => deleteProduct(p.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleHeroFileChange}
+            className="p-2 border rounded"
+          />
+
+          {heroPreview && (
+            <img
+              src={heroPreview}
+              alt="Preview"
+              className="w-40 h-24 object-scale-down rounded border"
+            />
+          )}
+
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            {editingHeroId ? "Update Hero" : "Add Hero"}
+          </button>
+        </form>
+
+        {heroes.length === 0 ? (
+          <p className="text-gray-500">No heroes yet. Add one above.</p>
+        ) : (
+          <div className="grid gap-4">
+            {heroes.map((h) => (
+              <div
+                key={h.id}
+                className="bg-gray-50 border rounded-lg shadow-sm flex items-center p-4 gap-4"
+              >
+                <img
+                  src={h.image}
+                  alt={h.title}
+                  className="w-24 h-16 object-scale-down rounded"
+                />
+                <div className="flex-1">
+                  <h3 className="font-bold">{h.title}</h3>
+                  <p className="text-sm text-gray-600">{h.subtitle}</p>
+                </div>
+                <button
+                  onClick={() => handleHeroEdit(h)}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteHero(h.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  Delete
+                </button>
+              </div>
             ))}
-          </tbody>
-        </table>
-      )}
+          </div>
+        )}
+      </div>
+
+      {/* ✅ Product Management */}
+      <div className="bg-white shadow rounded p-6">
+        <h2 className="text-2xl font-bold mb-6">Manage Products</h2>
+
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Product Name"
+            className="p-2 border rounded"
+          />
+          <input
+            type="number"
+            name="price"
+            value={form.price}
+            onChange={handleChange}
+            placeholder="Price"
+            className="p-2 border rounded"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="p-2 border rounded md:col-span-2"
+          />
+          {preview && (
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-32 h-32 object-cover rounded border md:col-span-2"
+            />
+          )}
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Product Description"
+            className="p-2 border rounded md:col-span-2"
+            rows="3"
+          />
+          <button
+            type="submit"
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded col-span-1 md:col-span-2"
+          >
+            {editingId ? "Update Product" : "Add Product"}
+          </button>
+        </form>
+
+        {products.length === 0 ? (
+          <p className="text-gray-500">No products yet. Add one above.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {products.map((p) => (
+              <div
+                key={p.id}
+                className="bg-gray-50 border rounded-lg shadow-sm overflow-hidden flex flex-col"
+              >
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className="w-full h-40 object-scale-down"
+                />
+                <div className="p-4 flex-1 flex flex-col">
+                  <h3 className="text-lg font-semibold">{p.name}</h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {p.description || "No description"}
+                  </p>
+                  <p className="text-green-600 font-bold mb-4">
+                    ₦{Number(p.price).toLocaleString()}
+                  </p>
+                  <div className="mt-auto flex gap-2">
+                    <button
+                      onClick={() => handleEdit(p)}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteProduct(p.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
