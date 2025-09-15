@@ -26,7 +26,7 @@ function Navbar() {
           to="/"
           className="text-2xl font-extrabold text-white tracking-wide hover:scale-105 transition"
         >
-          MyShop
+          MrShrek
         </Link>
 
         {/* Search Bar */}
