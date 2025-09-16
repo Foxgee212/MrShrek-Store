@@ -42,18 +42,27 @@ const categories = [
 ];
 
 function Home() {
-  const { products } = useAdmin();
+  const { products, updateProductRatings } = useAdmin();
   const { addToCart } = useCart();
-  const { searchTerm } = useProduct(); // live search
-  const [darkMode, setDarkMode] = useState(false);
+  const { searchTerm, wishlist, toggleWishlist } = useProduct();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [sortOption, setSortOption] = useState("");
   const [quickViewProduct, setQuickViewProduct] = useState(null);
-  const [wishlist, setWishlist] = useState([]);
   const [visibleCount, setVisibleCount] = useState(8);
   const [newsletterEmail, setNewsletterEmail] = useState("");
 
-  // Filter & sort products whenever products, searchTerm, or sortOption changes
+
+  // Load products with ratings from localStorage
+  useEffect(() => {
+    const savedRatings = JSON.parse(localStorage.getItem("productRatings")) || {};
+    const productsWithRatings = products.map(p => ({
+      ...p,
+      ratings: savedRatings[p.id] || p.ratings || [],
+    }));
+    setFilteredProducts(productsWithRatings);
+  }, [products]);
+
+  // Filter & sort products
   useEffect(() => {
     let results = [...products];
 
@@ -68,18 +77,10 @@ function Home() {
 
     if (sortOption) {
       switch (sortOption) {
-        case "low-high":
-          results.sort((a, b) => a.price - b.price);
-          break;
-        case "high-low":
-          results.sort((a, b) => b.price - a.price);
-          break;
-        case "az":
-          results.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-          break;
-        case "za":
-          results.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
-          break;
+        case "low-high": results.sort((a, b) => a.price - b.price); break;
+        case "high-low": results.sort((a, b) => b.price - a.price); break;
+        case "az": results.sort((a, b) => (a.name || "").localeCompare(b.name || "")); break;
+        case "za": results.sort((a, b) => (b.name || "").localeCompare(a.name || "")); break;
       }
     }
 
@@ -87,7 +88,6 @@ function Home() {
     setVisibleCount(8);
   }, [products, searchTerm, sortOption]);
 
-  // Sidebar filter
   const handleFilter = ({ category, maxPrice }) => {
     let results = products.filter(
       (p) =>
@@ -106,18 +106,10 @@ function Home() {
 
     if (sortOption) {
       switch (sortOption) {
-        case "low-high":
-          results.sort((a, b) => a.price - b.price);
-          break;
-        case "high-low":
-          results.sort((a, b) => b.price - a.price);
-          break;
-        case "az":
-          results.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-          break;
-        case "za":
-          results.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
-          break;
+        case "low-high": results.sort((a, b) => a.price - b.price); break;
+        case "high-low": results.sort((a, b) => b.price - a.price); break;
+        case "az": results.sort((a, b) => (a.name || "").localeCompare(b.name || "")); break;
+        case "za": results.sort((a, b) => (b.name || "").localeCompare(a.name || "")); break;
       }
     }
 
@@ -125,31 +117,15 @@ function Home() {
     setVisibleCount(8);
   };
 
-  const toggleWishlist = (productId) => {
-    setWishlist((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
-  };
-
   const flashSaleProducts = products.filter((p) => p.isFlashSale);
   const recommendedProducts = products.slice(0, 10);
 
   return (
-    <div className={`min-h-screen ${darkMode ? "dark bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
+    <div className={`min-h-screen "bg-white text-gray-900"}`}>
       <HeroBanner />
       <Categories />
 
-      {/* Dark Mode Toggle */}
-      <div className="flex justify-end p-4">
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded"
-        >
-          {darkMode ? "Light Mode" : "Dark Mode"}
-        </button>
-      </div>
+  
 
       <div className="flex p-6 gap-6 flex-wrap">
         <SidebarFilters categories={categories} onFilter={handleFilter} />
@@ -157,11 +133,7 @@ function Home() {
         {/* Products */}
         <div className="flex-1">
           <div className="flex justify-between items-center mb-4 gap-4 flex-wrap">
-            <select
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-              className="border px-2 py-1 rounded"
-            >
+            <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="border px-2 py-1 rounded">
               <option value="">Sort By</option>
               <option value="low-high">Price: Low → High</option>
               <option value="high-low">Price: High → Low</option>
@@ -172,9 +144,7 @@ function Home() {
 
           {!products.length ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-gray-200 h-64 rounded animate-pulse" />
-              ))}
+              {[...Array(8)].map((_, i) => <div key={i} className="bg-gray-200 h-64 rounded animate-pulse" />)}
             </div>
           ) : filteredProducts.length === 0 ? (
             <p>No products found.</p>
@@ -187,20 +157,16 @@ function Home() {
                     : 0;
 
                   return (
-                    <div key={product.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition flex flex-col relative hover:scale-105 transition-transform">
+                    <div key={product.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg flex flex-col relative hover:scale-105 transition-transform">
                       {product.isNew && <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">New</span>}
                       {product.isSale && <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">Sale</span>}
 
+                      {/* Wishlist */}
                       <div className="absolute top-2 right-8 cursor-pointer" onClick={() => toggleWishlist(product.id)}>
                         <Heart className={`${wishlist.includes(product.id) ? "text-red-500 fill-red-500" : "text-gray-400"}`} />
                       </div>
 
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-48 object-scale-down rounded mb-3 cursor-pointer"
-                        onClick={() => setQuickViewProduct(product)}
-                      />
+                      <img src={product.image} alt={product.name} className="w-full h-48 object-scale-down rounded mb-3 cursor-pointer" onClick={() => setQuickViewProduct(product)} />
 
                       <h2 className="text-lg font-semibold line-clamp-1">{product.name}</h2>
                       {product.description && <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2 mb-2">{product.description}</p>}
@@ -215,23 +181,30 @@ function Home() {
                       </div>
 
                       <div className="flex gap-1 mb-3">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            size={16}
-                            className="cursor-pointer text-gray-300 hover:text-yellow-500"
+                        {[1,2,3,4,5].map(star => (
+                          <Star key={star} size={16} className="cursor-pointer text-gray-300 hover:text-yellow-500"
                             onClick={() => {
-                              product.ratings = product.ratings ? [...product.ratings, star] : [star];
-                              setFilteredProducts([...filteredProducts]);
+                              const newRatings = [...(product.ratings || []), star];
+
+                              // Update state
+                              const updatedProducts = filteredProducts.map(p => 
+                                p.id === product.id ? { ...p, ratings: newRatings } : p
+                              );
+                              setFilteredProducts(updatedProducts);
+
+                              // Persist ratings
+                              const savedRatings = JSON.parse(localStorage.getItem("productRatings")) || {};
+                              savedRatings[product.id] = newRatings;
+                              localStorage.setItem("productRatings", JSON.stringify(savedRatings));
+
+                              // Update Admin Context
+                              updateProductRatings(product.id, newRatings);
                             }}
                           />
                         ))}
                       </div>
 
-                      <button
-                        onClick={() => addToCart(product)}
-                        className="mt-auto bg-green-600 dark:bg-green-500 text-white dark:text-gray-900 px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600"
-                      >
+                      <button onClick={() => addToCart(product)} className="mt-auto bg-green-600 dark:bg-green-500 text-white dark:text-gray-900 px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600">
                         Add to Cart
                       </button>
                     </div>
@@ -241,10 +214,7 @@ function Home() {
 
               {visibleCount < filteredProducts.length && (
                 <div className="flex justify-center mt-6">
-                  <button
-                    onClick={() => setVisibleCount((prev) => prev + 8)}
-                    className="bg-green-600 dark:bg-green-500 text-white dark:text-gray-900 px-6 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600"
-                  >
+                  <button onClick={() => setVisibleCount(prev => prev + 8)} className="bg-green-600 dark:bg-green-500 text-white dark:text-gray-900 px-6 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600">
                     Load More
                   </button>
                 </div>
@@ -254,7 +224,7 @@ function Home() {
         </div>
       </div>
 
-      {/* Recommended */}
+      {/* Recommended Products */}
       <div className="mt-12">
         <h2 className="text-2xl font-bold mb-4">Recommended for You</h2>
         <div className="flex overflow-x-auto gap-4">
@@ -324,9 +294,9 @@ function Home() {
           <p className="text-gray-400">Your one-stop online store</p>
         </div>
         <div className="flex gap-4 mt-4 md:mt-0">
-          <a href="#" className="hover:text-green-500"><FaFacebook size={20} /></a>
-          <a href="#" className="hover:text-green-500"><FaTwitter size={20} /></a>
-          <a href="#" className="hover:text-green-500"><FaInstagram size={20} /></a>
+          <a href="#" className="hover:text-green-500" target="_blank"><FaFacebook size={20} /></a>
+          <a href="#" className="hover:text-green-500" target="_blank"><FaTwitter size={20} /></a>
+          <a href="#" className="hover:text-green-500" target="_blank"><FaInstagram size={20} /></a>
         </div>
       </footer>
 

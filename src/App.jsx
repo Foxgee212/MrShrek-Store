@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ProductProvider } from "./context/ProductContext"; // ✅ new context
 
 
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
@@ -17,7 +18,7 @@ import Signup from "./pages/Signup";
 import OrderHistory from "./pages/OrderHistory";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLoginPage from "./pages/AdminLoginPage"
-
+import Wishlist from "./pages/Wishlist";
 
 
 
@@ -58,6 +59,12 @@ function App() {
                         }
                   />
                   <Route path="/adminlogin" element={<AdminLoginPage  />} />
+                  <Route path="/wishlist" element={
+                                                    <ProtectedRoute>
+                                                      <Wishlist />
+                                                    </ProtectedRoute>
+                                                  } />
+
 
                   </Routes>
                 </Router>

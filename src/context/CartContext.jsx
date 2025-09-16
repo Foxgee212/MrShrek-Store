@@ -2,41 +2,55 @@ import { createContext, useReducer, useContext, useEffect } from "react";
 
 const CartContext = createContext();
 
+const initialState = {
+  cart: JSON.parse(localStorage.getItem("cart")) || [],
+  wishlist: JSON.parse(localStorage.getItem("wishlist")) || [],
+};
+
 const cartReducer = (state, action) => {
   switch (action.type) {
     case "ADD_TO_CART": {
-      const existing = state.find((item) => item.id === action.product.id);
-      if (existing) {
-        return state.map((item) =>
-          item.id === action.product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...state, { ...action.product, quantity: 1 }];
+      const existing = state.cart.find((item) => item.id === action.product.id);
+      const newCart = existing
+        ? state.cart.map((item) =>
+            item.id === action.product.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          )
+        : [...state.cart, { ...action.product, quantity: 1 }];
+      return { ...state, cart: newCart };
     }
 
     case "INCREMENT":
-      return state.map((item) =>
-        item.id === action.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item.id === action.id ? { ...item, quantity: item.quantity + 1 } : item
+        ),
+      };
 
     case "DECREMENT":
-      return state
-        .map((item) =>
-          item.id === action.id
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        )
-        .filter((item) => item.quantity > 0); // remove if 0
+      return {
+        ...state,
+        cart: state.cart
+          .map((item) =>
+            item.id === action.id ? { ...item, quantity: item.quantity - 1 } : item
+          )
+          .filter((item) => item.quantity > 0),
+      };
 
     case "REMOVE_FROM_CART":
-      return state.filter((item) => item.id !== action.id);
+      return { ...state, cart: state.cart.filter((item) => item.id !== action.id) };
 
     case "CLEAR_CART":
-      return [];
+      return { ...state, cart: [] };
+
+    case "TOGGLE_WISHLIST":
+      const exists = state.wishlist.includes(action.id);
+      const newWishlist = exists
+        ? state.wishlist.filter((id) => id !== action.id)
+        : [...state.wishlist, action.id];
+      return { ...state, wishlist: newWishlist };
 
     default:
       return state;
@@ -44,25 +58,43 @@ const cartReducer = (state, action) => {
 };
 
 export const CartProvider = ({ children }) => {
-  // ✅ Load from localStorage initially
-  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-  const [cart, dispatch] = useReducer(cartReducer, storedCart);
+  const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  // ✅ Save to localStorage whenever cart changes
+  // Persist cart & wishlist
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    localStorage.setItem("cart", JSON.stringify(state.cart));
+    localStorage.setItem("wishlist", JSON.stringify(state.wishlist));
+  }, [state.cart, state.wishlist]);
 
-  // Actions
+  // Cart actions
   const addToCart = (product) => dispatch({ type: "ADD_TO_CART", product });
   const removeFromCart = (id) => dispatch({ type: "REMOVE_FROM_CART", id });
   const clearCart = () => dispatch({ type: "CLEAR_CART" });
   const increment = (id) => dispatch({ type: "INCREMENT", id });
   const decrement = (id) => dispatch({ type: "DECREMENT", id });
+  const toggleWishlist = (id) => dispatch({ type: "TOGGLE_WISHLIST", id });
+
+  // Derived values
+  const totalItems = state.cart.reduce((total, item) => total + item.quantity, 0);
+  const totalPrice = state.cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, clearCart, increment, decrement }}
+      value={{
+        cart: state.cart,
+        wishlist: state.wishlist,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        increment,
+        decrement,
+        toggleWishlist,
+        totalItems,
+        totalPrice,
+      }}
     >
       {children}
     </CartContext.Provider>
