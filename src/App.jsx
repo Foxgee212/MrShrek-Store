@@ -1,18 +1,23 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
+import { AdminProvider } from "./context/AdminContext";
+import ProtectedAdmin from "./components/ProtectedAdmin";
+import { HeroProvider } from "./context/HeroContext";
+import { OrderProvider } from "./context/OrderContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import OrderHistory from "./pages/OrderHistory";
-import { OrderProvider } from "./context/OrderContext";
 import AdminDashboard from "./pages/AdminDashboard";
-import { AdminProvider } from "./context/AdminContext";
-import LoginPage from "./pages/LoginPage";
-import ProtectedAdmin from "./components/ProtectedAdmin";
-import { HeroProvider } from "./context/HeroContext";
+import AdminLoginPage from "./pages/AdminLoginPage"
+
+
 
 
 
@@ -32,10 +37,18 @@ function App() {
                 <Navbar />
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/cart" element={
+                                                <ProtectedRoute>
+                                                  <Cart />
+                                                </ProtectedRoute>
+                                              } />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
-                  <Route path="/orders" element={<OrderHistory />} />
+                  <Route path="/orders" element={
+                                                <ProtectedRoute>
+                                                  <OrderHistory />
+                                                </ProtectedRoute>
+                                                } />
                   <Route
                         path="/admin"
                         element={
@@ -44,7 +57,7 @@ function App() {
                           </ProtectedAdmin>
                         }
                   />
-                  <Route path="/adminlogin" element={<LoginPage  />} />
+                  <Route path="/adminlogin" element={<AdminLoginPage  />} />
 
                 </Routes>
               </Router>

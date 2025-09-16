@@ -1,19 +1,16 @@
 // src/components/ProtectedAdmin.jsx
-import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { Navigate } from "react-router-dom";
 
-function ProtectedAdmin({ children }) {
-  const { user } = useAuth();
+export const ProtectedAdmin = ({ children }) => {
+  const { user, isAdmin, loading } = useAuth();
 
-  if (!user) {
-    return <Navigate to="/login" replace />; // not logged in
+  if (loading) return null; // optionally show a spinner
+
+  if (!user || !isAdmin) {
+    return <Navigate to="/" />; // redirect non-admins
   }
 
-  if (user.role !== "admin") {
-    return <Navigate to="/" replace />; // logged in but not admin
-  }
-
-  return children; // ✅ allowed
-}
-
+  return children; // render admin dashboard
+};
 export default ProtectedAdmin;

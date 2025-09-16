@@ -12,7 +12,7 @@ function HeroBanner() {
     if (heroes.length > 1 && !paused) {
       const interval = setInterval(() => {
         setCurrent((prev) => (prev + 1) % heroes.length);
-      }, 5000);
+      }, 3000);
       return () => clearInterval(interval);
     }
   }, [heroes, paused]);

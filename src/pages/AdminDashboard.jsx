@@ -275,7 +275,7 @@ const handleHeroFileChange = (e) => {
                 <img
                   src={p.image}
                   alt={p.name}
-                  className="w-full h-40 object-scale-down rounded-b-none"
+                  className="w-full h-40 object-scale-down rounded-b-none mt-2"
                 />
                 <div className="p-4 flex-1 flex flex-col">
                   <h3 className="text-lg font-semibold">{p.name}</h3>

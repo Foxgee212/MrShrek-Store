@@ -127,7 +127,7 @@ function Home() {
                   {/* Add to Cart */}
                   <button
                     onClick={() => addToCart(product)}
-                    className="mt-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                    className="mt-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 cursor-pointer"
                   >
                     Add to Cart
                   </button>
