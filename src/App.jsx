@@ -6,6 +6,7 @@ import ProtectedAdmin from "./components/ProtectedAdmin";
 import { HeroProvider } from "./context/HeroContext";
 import { OrderProvider } from "./context/OrderContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ProductProvider } from "./context/ProductContext"; // ✅ new context
 
 
 import Navbar from "./components/Navbar";
@@ -31,17 +32,16 @@ function App() {
         <CartProvider>
           <OrderProvider>
             <AdminProvider>
-
-              
-              <Router basename="/MrShrek-Store/">
-                <Navbar />
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/cart" element={
-                                                <ProtectedRoute>
-                                                  <Cart />
-                                                </ProtectedRoute>
-                                              } />
+              <ProductProvider>
+                <Router basename="/MrShrek-Store/">
+                  <Navbar />
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/cart" element={
+                      <ProtectedRoute>
+                        <Cart />
+                      </ProtectedRoute>
+                    } />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/orders" element={
@@ -59,8 +59,9 @@ function App() {
                   />
                   <Route path="/adminlogin" element={<AdminLoginPage  />} />
 
-                </Routes>
-              </Router>
+                  </Routes>
+                </Router>
+              </ProductProvider>
             </AdminProvider>
           </OrderProvider>
         </CartProvider>
