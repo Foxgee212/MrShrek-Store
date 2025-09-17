@@ -5,11 +5,11 @@ A responsive ecommerce store with product filters, wishlist, and authentication.
 👉 [Click Here](https://mrshrek-store.vercel.app)
 
 ## 📸 Screenshots
-![Homepage](./screenshots/Home.png)
-![Product Page](./screenshots/products.png)
-![Cart Page](./screenshots/cart.pns)
-![Wishlist](./screenshots/wishlist.png)
-![Login Page](./Screenshots/Login.png)
+![Homepage](./src/Screenshots/Home.png)
+![Product Page](./src/Screenshots/products.png)
+![Cart Page](./src/Screenshots/cart.pns)
+![Wishlist](./src/Screenshots/wishlist.png)
+![Login Page](./src/Screenshots/Login.png)
 
 ## ⚡ Tech Stack
 - React, Context API
