@@ -7,7 +7,7 @@ A responsive ecommerce store with product filters, wishlist, and authentication.
 ## 📸 Screenshots
 ![Homepage](./src/Screenshots/Home.png)
 ![Product Page](./src/Screenshots/products.png)
-![Cart Page](./src/Screenshots/cart.pns)
+![Cart Page](./src/Screenshots/cart.png)
 ![Wishlist](./src/Screenshots/wishlist.png)
 ![Login Page](./src/Screenshots/Login.png)
 
