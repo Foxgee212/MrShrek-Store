@@ -3,7 +3,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useProduct } from "../context/ProductContext";
 import { ShoppingCart, User, Search, LogOut, History, Shield, LogIn, UserPlus, Menu, X, Heart } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function Navbar() {
   const { cart } = useCart();
@@ -94,12 +94,6 @@ function Navbar() {
               placeholder="Search products..."
               className="px-4 py-2 rounded-md outline-none focus:ring-2 focus:ring-yellow-300"
             />
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded"
-            >
-              {darkMode ? "Light Mode" : "Dark Mode"}
-            </button>
             {user ? (
               <>
                 <span className="flex items-center gap-2 bg-yellow-600 px-3 py-1 rounded-md"><User size={18} /> {user.email}</span>
