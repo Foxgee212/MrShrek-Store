@@ -29,7 +29,7 @@ function Navbar() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search products..."
-            className="w-full px-4 py-2 rounded-md outline-none focus:ring-2 focus:ring-yellow-300"
+            className="w-full px-4 py-2 rounded-4xl outline-none focus:ring-2 focus:ring-yellow-200 ring-2 ring-yellow-300 "
           />
           <Search className="absolute right-3 top-2.5 text-gray-500 cursor-pointer" size={20} />
         </div>
@@ -52,7 +52,7 @@ function Navbar() {
               </span>
               <Link to="/orders" className="flex items-center gap-1 hover:text-gray-200 transition"><History size={18} /> Orders</Link>
               <Link to="/adminlogin" className="flex items-center gap-1 hover:text-gray-200 transition"><Shield size={18} /> Admin</Link>
-              <button onClick={logout} className="flex items-center gap-1 bg-red-500 px-3 py-1 rounded hover:bg-red-600 transition">
+              <button onClick={logout} className="flex items-center gap-1 bg-red-500 px-3 py-1 rounded-4xl hover:bg-red-600 transition">
                 <LogOut size={16} /> Logout
               </button>
             </>
@@ -99,7 +99,7 @@ function Navbar() {
                 <span className="flex items-center gap-2 bg-yellow-600 px-3 py-1 rounded-md"><User size={18} /> {user.email}</span>
                 <Link to="/orders" className="flex items-center gap-1 hover:text-gray-200 transition"><History size={18} /> Orders</Link>
                 <Link to="/adminlogin" className="flex items-center gap-1 hover:text-gray-200 transition"><Shield size={18} /> Admin</Link>
-                <button onClick={logout} className="flex items-center gap-1 bg-red-500 px-3 py-1 rounded hover:bg-red-600 transition"><LogOut size={16} /> Logout</button>
+                <button onClick={logout} className="flex items-center gap-1 bg-red-500 px-3 py-1 rounded-4xl hover:bg-red-600 transition"><LogOut size={16} /> Logout</button>
               </>
             ) : (
               <>
