@@ -117,14 +117,14 @@ const handleHeroFileChange = (e) => {
       <div className="bg-white shadow rounded p-6">
         <h2 className="text-2xl font-bold mb-6">Manage Hero Banner</h2>
 
-        <form onSubmit={handleHeroSubmit} className="grid gap-4 mb-8">
+        <form onSubmit={handleHeroSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <input
             type="text"
             name="title"
             value={heroForm.title}
             onChange={handleHeroChange}
             placeholder="Hero Title"
-            className="p-2 border rounded"
+            className="p-2 border rounded md:col-span-2"
           />
           <input
             type="text"

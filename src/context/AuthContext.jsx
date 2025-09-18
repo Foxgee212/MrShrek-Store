@@ -59,6 +59,7 @@ export const AuthProvider = ({ children }) => {
   try {
     const result = await signInWithPopup(auth, provider);
     const loggedUser = result.user;
+    console.log(loggedUser);
     const normalizedEmail = loggedUser.email.trim().toLowerCase();
     const adminStatus = normalizedEmail === "admin@shop.com";
 
